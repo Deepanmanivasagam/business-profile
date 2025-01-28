@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+const locationController = require('../controllers/locationController');
+
+router.post('/country', locationController.createCountry);
+router.post('/state', locationController.createState);
+router.post('/city', locationController.createCity);
+
+router.get('/countries', locationController.getAllCountries);
+router.get('/states', locationController.getAllStates);
+router.get('/cities', locationController.getAllCities);
+
+module.exports = router;

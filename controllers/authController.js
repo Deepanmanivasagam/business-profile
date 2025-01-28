@@ -6,7 +6,7 @@ const jwtUtils = require("../utils/jwtUtils");
 
 
 const registerUser = async (req, res) => {
-  const { username, fullName, email, password, phone, dob, profilePicture } = req.body;
+  const { username, fullName, email, password, phone, dob, profilePicture,role } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -22,6 +22,7 @@ const registerUser = async (req, res) => {
       phone,
       dob,
       profilePicture,
+      role,
     });
 
     await user.save();
@@ -89,7 +90,7 @@ const getUser = async(req,res)=>{
 
 const updateUser = async (req, res) => {
   const {username, fullName,email,password, phone, dob, profilePicture } = req.body;
-
+   
   try {
     const user = await User.findById(req.user);
 
