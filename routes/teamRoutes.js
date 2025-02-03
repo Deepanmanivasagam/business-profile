@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/create',protect,authorizeAdmin,createTeam);
 router.get('/all', getAllTeams);
 router.get('/:id', getTeamById);
-router.put('/update/:id', updateTeam);
-router.delete('/delete/:id', deleteTeam);
+router.put('/update/:id',authorizeAdmin,updateTeam);
+router.delete('/delete/:id',authorizeAdmin,deleteTeam);
 
 module.exports = router;
