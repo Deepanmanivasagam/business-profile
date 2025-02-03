@@ -11,22 +11,18 @@ const employeeschema = new mongoose.Schema({
     },
     Gender:{
         type:String,
-        required:true,
         enum:['Male','female','others']
     },
     projects:{
         type:Number,
-        required:true,
         min:0
     },
     salary:{
         type:Number,
-        required:true,
         min:0
     },
     experience:{
         type:String,
-        required:true,
         min:0
     },
     // performanceRating:{
