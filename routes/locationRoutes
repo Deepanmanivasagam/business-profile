@@ -10,4 +10,12 @@ router.get('/countries', locationController.getAllCountries);
 router.get('/states', locationController.getAllStates);
 router.get('/cities', locationController.getAllCities);
 
+router.put('/:id/country', locationController.updateCountry);
+router.put('/:id/state', locationController.updateState);
+router.put('/:id/city', locationController.updateCity);
+
+router.delete('/:id/country', locationController.deleteCountry);
+router.delete('/:id/state', locationController.deleteState);
+router.delete('/:id/city', locationController.deleteCity);
+
 module.exports = router;
