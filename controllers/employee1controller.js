@@ -1,5 +1,5 @@
 const Employee1 = require('../models/employee1');
-const bcrypt = require('bcrypt'); // For password hashing
+const bcrypt = require('bcryptjs'); // For password hashing
 
 // Helper function to generate attendance for 30 or 31 days based on the month
 const generateAttendance = (month, year) => {
