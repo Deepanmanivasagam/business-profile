@@ -8,7 +8,7 @@ const employeeschema = new mongoose.Schema({
     teamName:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Team'
-    },
+    },  
     Gender:{
         type:String,
         enum:['Male','female','others']
