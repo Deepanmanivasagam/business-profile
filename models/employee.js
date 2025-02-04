@@ -8,7 +8,14 @@ const employeeschema = new mongoose.Schema({
     teamName:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Team'
-    },  
+    },
+    date_of_birth:{
+        type:Date,
+        required:true,
+    },
+    age:{
+        type:Number
+    },
     Gender:{
         type:String,
         enum:['Male','female','others']
@@ -25,12 +32,28 @@ const employeeschema = new mongoose.Schema({
         type:String,
         min:0
     },
-    // performanceRating:{
-    //     type:String,
-    //     required:true,
-    //     min:0,
-    //     max:10
-    // },
+    employment_type:{
+        type:String,
+    },
+    job_title:{
+        type:String
+    }
+})
+
+function calculateage(date_of_birth){
+    const today = new Date();
+    const birthdate = new Date(date_of_birth);
+    let age = today.getFullYear() - birthdate.getFullYear();
+    const monthdiff = today.getMonth() - birthdate.getMonth();
+    if( monthdiff<0 || monthdiff ===0 && birthdate.getDate() > today.getDate()){
+        age--;
+    }
+    return age;
+}
+
+employeeschema.pre('save',function(next){
+    this.age = calculateage(this.date_of_birth);
+    next();
 })
 
 const Employee = mongoose.model('Employee',employeeschema);
