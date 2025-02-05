@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const authorizeAdmin = require('../middleware/authorizeAdmin');
+const protect = require('../middleware/authMiddleware');
 
 const {
     addAttendance,
@@ -12,7 +14,7 @@ const {
 router.post('/add',addAttendance);
 router.get('/getall',getattendance);
 router.get('/getbyid/:id',getattendanceById);
-router.put('/updateattendance/:id',updateattendance);
-router.delete('/delete/:id',deleteAttendance);
+router.put('/updateattendance/:id',protect,authorizeAdmin,updateattendance);
+router.delete('/delete/:id',protect,authorizeAdmin,deleteAttendance);
 
 module.exports = router;

@@ -50,12 +50,17 @@ const getattendanceById = async(req,res)=>{
 const updateattendance = async(req,res)=>{
     try{
         const {id} = req.params;
-        const {checkIn,checkOut,date} = req.body;
-        if(!id){
-            return res.status(400).json('enter the id and update');
+        const {checkIn,checkOut} = req.body;
+
+        const attendance = await Attendance.findById(id);
+        if(!attendance){
+            return res.status(400).json({message:'attendance not found'});
         }
-        const updatedattendance =await Attendance.findByIdAndUpdate(id,{checkIn,checkOut,date},{new:true});
-        res.status(200).json({message:'records updated',updatedAttendance:updatedattendance});
+
+        attendance.checkIn = checkIn;
+        attendance.checkOut = checkOut;
+        await attendance.save();
+        res.status(200).json({message:'records updated',updatedAttendance:attendance});
     }catch(error){
         res.status(400).json({message:error.message});
     }
@@ -79,3 +84,36 @@ module.exports = {
     updateattendance,
     deleteAttendance,
 };
+
+const cron = require('node-cron');
+const Employee = require('../models/employee');
+
+cron.schedule('59 23 * * *', async () => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+
+        const allEmployees = await Employee.find();
+        const attendedEmployees = await Attendance.find({ date: today }).distinct('employeeId');
+
+        const absentEmployees = allEmployees.filter(emp => !attendedEmployees.includes(emp._id.toString()));
+
+        const absentRecords = absentEmployees.map(emp => ({
+            employeeId: emp._id,
+            date: today,
+            checkIn: null,
+            checkOut: null,
+            duration: 0,
+            status: 'Absent',
+        }));
+
+        if (absentRecords.length) {
+            await Attendance.insertMany(absentRecords);
+            console.log(`Marked ${absentRecords.length} employees as Absent for ${today}`);
+        } else {
+            console.log(' No absentees found today.');
+        }
+
+    } catch (error) {
+        console.error('Error marking absentees:', error.message);
+    }
+});

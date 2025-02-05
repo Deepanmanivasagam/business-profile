@@ -22,7 +22,8 @@ app.use("/api/business",businessroutes);
 app.use("/api/location",locationroutes);
 app.use("/api/employees",employeeRoutes);
 app.use("/api/teams",teamRoutes);
-app.use('/api/attendance',attendanceroutes)
+app.use('/api/attendance',attendanceroutes);
+
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/',async(req,res)=>{
