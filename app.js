@@ -8,7 +8,7 @@ const businessroutes = require("./routes/businessroutes");
 const locationroutes = require("./routes/locationRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");
-const employeeRoutes1 = require("./routes/employee1routes");
+const attendanceroutes = require('./routes/attendanceroutes');
 
 dotenv.config();
 
@@ -22,6 +22,7 @@ app.use("/api/business",businessroutes);
 app.use("/api/location",locationroutes);
 app.use("/api/employees",employeeRoutes);
 app.use("/api/teams",teamRoutes);
+app.use('/api/attendance',attendanceroutes)
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/',async(req,res)=>{
