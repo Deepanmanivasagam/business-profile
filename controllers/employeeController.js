@@ -4,7 +4,7 @@ const Business = require('../models/business')
 
 const createEmployee = async(req,res)=>{
     try{
-         const {employeeName,teamName,date_of_birth,age,Gender,projects,salary,experience,employment_type, job_title} = req.body;
+         const {employeeName,teamName,date_of_birth,age,Gender,projects,salary,experience,employment_type, job_title,casual_Leave,Medical_Leave} = req.body;
          const newemployee = new Employee({
                              employeeName,
                              teamName,
@@ -16,6 +16,8 @@ const createEmployee = async(req,res)=>{
                              experience,
                              employment_type,
                              job_title,
+                             casual_Leave,
+                             Medical_Leave,
                             });
          await newemployee.save()
          res.status(200).json({message:'employee added',employee:newemployee});
@@ -36,7 +38,7 @@ const getEmployeeNames = async (req, res) => {
 const updateEmployee = async (req,res)=>{
     try{
         const {id} = req.params;
-        const {employeeName, teamName,date_of_birth,age,Gender, projects, salary, experience, employement_type, job_title}=req.body;
+        const {employeeName, teamName,date_of_birth,age,Gender, projects, salary, experience, employement_type, job_title,casual_Leave,Medical_Leave}=req.body;
         
         const updatedemployee = await Employee.findByIdAndUpdate(id,{employeeName,teamName,date_of_birth,age, Gender, projects,salary,experience, employement_type, job_title},{new:true,runValidators:true});
         if(!updatedemployee){

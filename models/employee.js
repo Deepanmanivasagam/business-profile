@@ -37,8 +37,20 @@ const employeeschema = new mongoose.Schema({
     },
     job_title:{
         type:String
+    },
+    casual_Leave:{
+        type:Number,
+        default:12,
+    },
+    medical_Leave:{
+        type:Number,
+        default:8,
+    },
+    Public_Holidays:{
+        type:Number,
+        default:60,
     }
-})
+});
 
 function calculateage(date_of_birth){
     const today = new Date();

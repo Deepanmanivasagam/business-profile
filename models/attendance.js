@@ -58,7 +58,9 @@ function calculateDuration(checkIn, checkOut) {
 
     const checkInMinutes = formatTo24Hour(checkIn);
     const checkOutMinutes = formatTo24Hour(checkOut);
-    return (checkOutMinutes - checkInMinutes) / 60; 
+    const durationInHours = (checkOutMinutes - checkInMinutes) / 60;
+
+    return Math.round(durationInHours * 100) / 100
 }
 
 const Attendance = mongoose.model('Attendance', attendanceSchema);
