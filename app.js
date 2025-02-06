@@ -9,6 +9,8 @@ const locationroutes = require("./routes/locationRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const attendanceroutes = require('./routes/attendanceroutes');
+const leaveroutes = require('./routes/leaveroutes');
+require('./jobs/publicHolidayCorn');
 
 dotenv.config();
 
@@ -23,6 +25,7 @@ app.use("/api/location",locationroutes);
 app.use("/api/employees",employeeRoutes);
 app.use("/api/teams",teamRoutes);
 app.use('/api/attendance',attendanceroutes);
+app.use('/api/leave',leaveroutes);
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 

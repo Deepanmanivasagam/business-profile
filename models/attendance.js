@@ -26,6 +26,10 @@ const attendanceSchema = new mongoose.Schema({
         enum:['Present','Half a day','Absent'],
         default:'Absent'
     },
+    isApproved:{
+      type:Boolean,
+      default:false,
+    },
 });
 
 attendanceSchema.pre('save', function (next) {

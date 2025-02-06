@@ -1,4 +1,8 @@
 const Attendance = require('../models/attendance');
+const cron = require('node-cron');
+const Employee = require('../models/employee');
+const Leave = require('../models/leavemodel');
+
 
 const addAttendance = async (req, res) => {
     try {
@@ -85,8 +89,7 @@ module.exports = {
     deleteAttendance,
 };
 
-const cron = require('node-cron');
-const Employee = require('../models/employee');
+
 
 cron.schedule('59 23 * * *', async () => {
     try {
@@ -94,23 +97,41 @@ cron.schedule('59 23 * * *', async () => {
 
         const allEmployees = await Employee.find();
         const attendedEmployees = await Attendance.find({ date: today }).distinct('employeeId');
-
         const absentEmployees = allEmployees.filter(emp => !attendedEmployees.includes(emp._id.toString()));
+        const absentRecords = [];
 
-        const absentRecords = absentEmployees.map(emp => ({
-            employeeId: emp._id,
-            date: today,
-            checkIn: null,
-            checkOut: null,
-            duration: 0,
-            status: 'Absent',
-        }));
+        for (const emp of absentEmployees) {
+            console.log(`Before Deduction - Employee: ${emp.employeeName}, Casual Leave: ${emp.leave_blance.casual_Leave}`);
+
+            const attendanceRecord = await Attendance.findOne({
+                employeeId: emp._id,
+                date: today,
+            });
+
+            if (attendanceRecord && attendanceRecord.isApproved && emp.leave_blance.casual_Leave > 0) {
+                await Employee.findByIdAndUpdate(emp._id, {
+                    $inc: { 'leave_blance.casual_Leave': -1 },
+                });
+                console.log(`Updated Casual Leave - Employee: ${emp.employeeName}, New Leave: ${emp.leave_blance.casual_Leave - 1}`);
+            } else {
+                console.log(`Leave not approved for Employee: ${emp.employeeName}, or no casual leave left.`);
+            }
+
+            absentRecords.push({
+                employeeId: emp._id,
+                date: today,
+                checkIn: null,
+                checkOut: null,
+                duration: 0,
+                status: 'Absent',
+            });
+        }
 
         if (absentRecords.length) {
             await Attendance.insertMany(absentRecords);
-            console.log(`Marked ${absentRecords.length} employees as Absent for ${today}`);
+            console.log(`Marked ${absentRecords.length} employees as Absent and deducted casual leave.`);
         } else {
-            console.log(' No absentees found today.');
+            console.log('No absentees found today.');
         }
 
     } catch (error) {

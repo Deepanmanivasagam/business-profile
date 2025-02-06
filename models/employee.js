@@ -11,7 +11,6 @@ const employeeschema = new mongoose.Schema({
     },
     date_of_birth:{
         type:Date,
-        required:true,
     },
     age:{
         type:Number
@@ -38,17 +37,19 @@ const employeeschema = new mongoose.Schema({
     job_title:{
         type:String
     },
-    casual_Leave:{
-        type:Number,
-        default:12,
-    },
-    medical_Leave:{
-        type:Number,
-        default:8,
-    },
-    Public_Holidays:{
-        type:Number,
-        default:60,
+    leave_blance:{
+        casual_Leave:{
+            type:Number,
+            default:12,
+        },
+        medical_Leave:{
+            type:Number,
+            default:8,
+        },
+        Public_Holidays:{
+            type:Number,
+            default:60,
+        }
     }
 });
 
