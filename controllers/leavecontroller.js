@@ -58,7 +58,7 @@ const updateLeaveStatus = async (req, res) => {
 
         // Check if leave is already approved/rejected
         if (leave.status === 'approved' || leave.status === 'rejected') {
-            return res.status(400).json({message: `Leave is already ${leave.status}.` });
+            return res.status(400).json({ message:` Leave is already ${leave.status}. `});
         }
 
         // If approving, deduct leave balance
