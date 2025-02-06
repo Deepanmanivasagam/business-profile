@@ -46,10 +46,6 @@ const employeeschema = new mongoose.Schema({
             type:Number,
             default:8,
         },
-        Public_Holidays:{
-            type:Number,
-            default:60,
-        }
     }
 });
 

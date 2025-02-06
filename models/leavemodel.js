@@ -10,7 +10,7 @@ const leaveschema = new mongoose.Schema({
     },
     leaveType:{
         type:String,
-        enum:['casual','medical','holidays'],
+        enum:['casual','medical'],
         required:true,
     },
     status:{
