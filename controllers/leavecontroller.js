@@ -1,7 +1,7 @@
 const Leave = require('../models/leavemodel');
 const Employee = require('../models/employee');
 
-// Apply for leave
+
 const applyLeave = async (req, res) => {
     try {
         const { employeeId, date, leaveType } = req.body;
@@ -19,7 +19,7 @@ const applyLeave = async (req, res) => {
             return res.status(400).json({ message: 'Employee not found.' });
         }
 
-        // Check leave balance before applying
+    
         if (leaveType === 'casual' && employee.leave_blance.casual_Leave <= 0) {
             return res.status(400).json({ message: 'No casual leaves left.' });
         }
@@ -41,11 +41,10 @@ const applyLeave = async (req, res) => {
     }
 };
 
-// Approve or Reject Leave (Admin Only)
 const updateLeaveStatus = async (req, res) => {
     try {
-        const { id } = req.params; // Leave ID
-        const { status } = req.body; // 'approved' or 'rejected'
+        const { id } = req.params; 
+        const { status } = req.body; 
 
         if (!['approved', 'rejected'].includes(status)) {
             return res.status(400).json({ message: 'Invalid status.' });
@@ -56,12 +55,11 @@ const updateLeaveStatus = async (req, res) => {
             return res.status(404).json({ message: 'Leave request not found.' });
         }
 
-        // Check if leave is already approved/rejected
+        
         if (leave.status === 'approved' || leave.status === 'rejected') {
             return res.status(400).json({ message:` Leave is already ${leave.status}. `});
         }
 
-        // If approving, deduct leave balance
         if (status === 'approved') {
             const employee = await Employee.findById(leave.employeeId);
             if (!employee) {
