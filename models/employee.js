@@ -46,6 +46,10 @@ const employeeschema = new mongoose.Schema({
             type:Number,
             default:8,
         },
+    },
+    documents:{
+        type:String,
+        required:true,
     }
 });
 

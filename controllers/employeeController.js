@@ -4,7 +4,12 @@ const Business = require('../models/business')
 
 const createEmployee = async(req,res)=>{
     try{
+        console.log('received file:',req.file);
+        if(!req.file){
+            return res.status(400).json({message:'files are not uploaded'});
+        }
          const {employeeName,teamName,date_of_birth,age,Gender,projects,salary,experience,employment_type, job_title,casual_Leave,Medical_Leave} = req.body;
+         const documents = `/uploads/documents/${req.file.filename}`;
          const newemployee = new Employee({
                              employeeName,
                              teamName,
@@ -18,6 +23,7 @@ const createEmployee = async(req,res)=>{
                              job_title,
                              casual_Leave,
                              Medical_Leave,
+                             documents,
                             });
          await newemployee.save()
          res.status(200).json({message:'employee added',employee:newemployee});

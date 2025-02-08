@@ -4,11 +4,12 @@ const authorizeAdmin = require('../middleware/authorizeAdmin');
 const Employee = require('../models/employee');
 const Business = require('../models/business')
 const {getEmployeeNames,createEmployee,updateEmployee,deleteemployee} = require('../controllers/employeeController')
+const upload = require('../middleware/documents');
 
 const router = express.Router();
 
 router.get('/admin/employeeNames', protect, authorizeAdmin,getEmployeeNames);
-router.post('/admin/postemployee', protect, authorizeAdmin,createEmployee);
+router.post('/admin/postemployee',upload.single('documents'), protect, authorizeAdmin,createEmployee);
 router.put('/admin/updateemployee/:id', protect, authorizeAdmin,updateEmployee);
 router.delete('/admin/deleteemployee/:id', protect, authorizeAdmin,deleteemployee);
 
