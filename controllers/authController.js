@@ -6,7 +6,8 @@ const jwtUtils = require("../utils/jwtUtils");
 
 
 const registerUser = async (req, res) => {
-  const { username, fullName, email, password, phone, dob, profilePicture,role } = req.body;
+  const { username, fullName, email, password, phone, dob, role } = req.body;
+  const profilePicture = req.file ?`/uploads/${req.file.filename}`:null;
 
   try {
     const userExists = await User.findOne({ email });
@@ -32,6 +33,7 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       message: "User created successfully",
       token,
+      profilePicture:user.profilePicture
     });
   } catch (error) {
     res.status(500).json({ message: "Error registering user", error });
