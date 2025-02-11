@@ -9,10 +9,14 @@ const teamschema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    team_leader:{
+        type:String,
+        required:true, 
+    },
     employees:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Employee',
-    }]  
+    }]
 },
 {timestamps:true},
 {versionkey:false})

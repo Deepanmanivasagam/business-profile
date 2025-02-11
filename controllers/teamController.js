@@ -2,16 +2,16 @@ const Team = require('../models/team');
 
 const createTeam = async (req, res) => {
     try {
-        console.log('making a request to allow amdin:',req.user);
         
        if(!req.user || req.user.role !=="admin"){
         return res.status(403).json({message:"access denied.."});
        }
 
-        const { teamName, role, employees } = req.body;
+        const { teamName, role,team_leader,employees } = req.body;
         const newTeam = new Team({
             teamName,
             role,
+            team_leader,
             employees,
         });
         await newTeam.save();
@@ -42,10 +42,10 @@ const getTeamById = async (req, res) => {
 
 const updateTeam = async (req, res) => {
     try {
-        const { teamName, role, employees } = req.body;
+        const { teamName, role, team_leader,employees } = req.body;
         const updatedTeam = await Team.findByIdAndUpdate(
             req.params.id,
-            { teamName, role, employees },
+            { teamName, role, team_leader,employees },
             { new: true }
         );
         if (!updatedTeam) return res.status(404).json({ message: 'Team not found' });
