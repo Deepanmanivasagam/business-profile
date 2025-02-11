@@ -2,6 +2,7 @@ const Business = require('../models/business');
 const { Country, State, City } = require('../models/location');
 const Employee = require('../models/employee');
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const createBusiness = async (req, res) => {
         
@@ -46,7 +47,7 @@ const createBusiness = async (req, res) => {
          
         const newBusiness = new Business({
             CompanyName,
-            OwnerId: req.user ? req.user._id : null,
+            ClientId: req.user ? req.user._id : null,
             contactInfo,
             address,
             services: serviceAndGST,
@@ -88,7 +89,49 @@ const getBusinessById = async (req, res) => {
     }
 };
 
+const getclientServiceAndDate = async (req, res) => {
+    try {
+        const getthrees = await Business.find()
+            .populate('ClientId', 'username')
+            .select('CompanyName services createdAt ClientId')
 
+        const clientinfo = getthrees.map(getthree => ({
+            clientName: getthree.ClientId?.username,
+            companyName: getthree.CompanyName,
+            services: getthree.services.map(service => service.serviceName),
+            createdAt: getthree.createdAt.toISOString().split('T')[0],
+        }));
+
+        res.status(200).json(clientinfo);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching business details', error: error.message });
+    }
+};
+
+const getclientById = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const business = await Business.findById(id)
+            .populate({ path: 'ClientId', select: 'username' })
+            .select('CompanyName services createdAt ClientId')
+
+        if (!business) {
+            return res.status(404).json({ message: 'Business not found' });
+        }
+
+        const formattedBusiness = {
+            clientName:business.ClientId.username,
+            companyName: business.CompanyName,
+            services: business.services.map(service => service.serviceName),
+            createdAt: moment(business.createdAt).format('DD-MM-YYYY'),
+        };
+
+        res.status(200).json(formattedBusiness);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching business details', error: error.message });
+    }
+};
 
 const updateBusiness = async (req, res) => {
     try {
@@ -153,4 +196,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, updateBusiness, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById, updateBusiness, deleteBusiness };

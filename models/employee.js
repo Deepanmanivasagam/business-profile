@@ -49,7 +49,6 @@ const employeeschema = new mongoose.Schema({
     },
     documents:{
         type:String,
-        required:true,
     }
 });
 

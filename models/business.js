@@ -23,7 +23,7 @@ const businessSchema = new mongoose.Schema({
                   required:true,
                   unique:true,
                 },
-    OwnerId:{
+    ClientId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
     },
