@@ -9,6 +9,7 @@ const {
   getclientById,
   updateBusiness,
   deleteBusiness,
+  getdate,
 } = require('../controllers/businesscontroller');
 
 const router = express.Router();
@@ -18,6 +19,8 @@ router.get('/allprofiles',protect, getAllBusinesses);
 router.get('/getbyid/:id', protect, getBusinessById);
 router.get('/getthree',getclientServiceAndDate);
 router.get('/getthree/:id',getclientById);
+router.post('/filter-date',getdate);
 router.put('/update/:id', protect, updateBusiness);
 router.delete('/delete/:id', protect, deleteBusiness);
+
 module.exports = router;

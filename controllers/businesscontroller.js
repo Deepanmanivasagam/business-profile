@@ -94,14 +94,15 @@ const getclientServiceAndDate = async (req, res) => {
         const getthrees = await Business.find()
             .populate('ClientId', 'username')
             .select('CompanyName services createdAt ClientId')
-
-        const clientinfo = getthrees.map(getthree => ({
-            clientName: getthree.ClientId?.username,
-            companyName: getthree.CompanyName,
-            services: getthree.services.map(service => service.serviceName),
-            createdAt: getthree.createdAt.toISOString().split('T')[0],
-        }));
-
+            
+            const clientinfo = getthrees.map(getthree => ({
+                clientName: getthree.ClientId?.username,
+                companyName: getthree.CompanyName,
+                services: getthree.services.map(service => service.serviceName),
+                createdAt: getthree.createdAt.toISOString().split('T')[0],
+            }));
+            console.log(clientinfo[0].createdAt);
+            
         res.status(200).json(clientinfo);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching business details', error: error.message });
@@ -132,6 +133,50 @@ const getclientById = async (req, res) => {
         res.status(500).json({ message: 'Error fetching business details', error: error.message });
     }
 };
+
+const getdate = async (req, res) => {
+    try {
+        let { date, services, clientId } = req.body;
+
+        if (!date) {
+            return res.status(400).json({ message: "Date parameter is required" });
+        }
+
+        let startOfDay = moment(date, "DD-MM-YYYY").startOf("day").toISOString();
+        let endOfDay = moment(date, "DD-MM-YYYY").endOf("day").toISOString();
+
+        let filter = {
+            createdAt: { $gte: startOfDay, $lt: endOfDay },
+        };
+
+        if (clientId) {
+            filter.ClientId = clientId;
+        }
+
+        if (services) {
+            filter["services._id"] = services;
+        }
+        const businesses = await Business.find(filter)
+            .populate({ path: "ClientId", select: "username" })
+            .select("ClientId services.serviceName")
+            .lean();
+
+        // if (!businesses.length) {
+        //     return res.status(404).json({ message: "No records found for this date" });
+        // }
+
+        const result = businesses.map(biz => ({
+            clientName: biz.ClientId?.username,
+            serviceName: biz.services.map(service => service.serviceName)
+        }));
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 const updateBusiness = async (req, res) => {
     try {
@@ -196,4 +241,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById, updateBusiness, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, deleteBusiness };
