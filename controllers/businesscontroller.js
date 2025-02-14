@@ -170,7 +170,7 @@ const getdate = async (req, res) => {
             serviceName: biz.services.map(service => service.serviceName)
         }));
 
-        res.status(200).json(result);
+        res.status(200).json({message:`client ordered under the date(${date})`,result});
     } catch (error) {
         console.error("Error:", error.message);
         res.status(500).json({ message: error.message });
