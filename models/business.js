@@ -36,6 +36,10 @@ const businessSchema = new mongoose.Schema({
         required:true,
     },
     services:[serviceSchema],
+    FromDateCount:{
+        type:Number,
+        default:0,
+    },
     profilePicture:{
         type:String,
         required:false,

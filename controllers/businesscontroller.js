@@ -2,11 +2,11 @@ const Business = require('../models/business');
 const { Country, State, City } = require('../models/location');
 const Employee = require('../models/employee');
 const mongoose = require('mongoose');
-const moment = require('moment');
+// const moment = require('moment');
 
 const createBusiness = async (req, res) => {
         
-    const { CompanyName, contactInfo, address, services, profilePicture, role, CountryName, StateName, CityName, employeeName } = req.body;
+    const { CompanyName, contactInfo, address, services, FromDateCount,profilePicture, role, CountryName, StateName, CityName, employeeName } = req.body;
     console.log('entire employeenames:',req.body);
     console.log('employeename:',req.body.employeeName);
     
@@ -134,43 +134,42 @@ const getclientById = async (req, res) => {
     }
 };
 
-const getdate = async (req, res) => {
+const getdate = async (req, res) => {   
     try {
-        let { date, services, clientId } = req.body;
+        let { date, services, ClientId } = req.body;
 
         if (!date) {
             return res.status(400).json({ message: "Date parameter is required" });
         }
 
-        let startOfDay = moment(date, "DD-MM-YYYY").startOf("day").toISOString();
-        let endOfDay = moment(date, "DD-MM-YYYY").endOf("day").toISOString();
+        let startOfDay = new Date(date);
+        let endOfDay = new Date(new Date(date).setHours(23, 59, 59, 999));
 
         let filter = {
-            createdAt: { $gte: startOfDay, $lt: endOfDay },
+            createdAt: { $gte: startOfDay, $lt: endOfDay }
         };
 
-        if (clientId) {
-            filter.ClientId = clientId;
+        if (ClientId) {
+            filter.ClientId = ClientId;
         }
 
         if (services) {
             filter["services._id"] = services;
         }
+
+        // console.log("Filter:", filter);
+
         const businesses = await Business.find(filter)
             .populate({ path: "ClientId", select: "username" })
             .select("ClientId services.serviceName")
             .lean();
-
-        // if (!businesses.length) {
-        //     return res.status(404).json({ message: "No records found for this date" });
-        // }
 
         const result = businesses.map(biz => ({
             clientName: biz.ClientId?.username,
             serviceName: biz.services.map(service => service.serviceName)
         }));
 
-        res.status(200).json({message:`client ordered under the date(${date})`,result});
+        res.status(200).json({ message: `Client orders for date (${date})`, result });
     } catch (error) {
         console.error("Error:", error.message);
         res.status(500).json({ message: error.message });
@@ -227,6 +226,29 @@ const updateBusiness = async (req, res) => {
     }
 };
 
+const autoincrement = async ()=>{
+    setInterval(async() => {
+       await Business.updateMany({},{$inc:{FromDateCount:1}});
+    },24*60*60*1000);
+}
+autoincrement();
+
+
+const getcount = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        const business = await Business.findById(id);
+        if (!business) {
+            return res.status(404).json({ message: "Business not found" });
+        }
+
+        res.status(200).json({ message: "counting Days", FromDateCount:`${business.FromDateCount} Days`});
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 const deleteBusiness = async (req, res) => {
     const { id } = req.params;
@@ -241,4 +263,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getcount, deleteBusiness };

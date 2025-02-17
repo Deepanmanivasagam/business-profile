@@ -8,6 +8,7 @@ const {
   getclientServiceAndDate,
   getclientById,
   updateBusiness,
+  getcount,
   deleteBusiness,
   getdate,
 } = require('../controllers/businesscontroller');
@@ -22,5 +23,6 @@ router.get('/getthree/:id',getclientById);
 router.post('/filter-date',getdate);
 router.put('/update/:id', protect, updateBusiness);
 router.delete('/delete/:id', protect, deleteBusiness);
+router.post('/getcount',getcount);
 
 module.exports = router;
