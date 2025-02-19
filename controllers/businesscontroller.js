@@ -226,28 +226,57 @@ const updateBusiness = async (req, res) => {
     }
 };
 
-const autoincrement = async ()=>{
-    setInterval(async() => {
-       await Business.updateMany({},{$inc:{FromDateCount:1}});
-    },24*60*60*1000);
-}
-autoincrement();
+// const autoincrement = async ()=>{
+//     setInterval(async() => {
+//        await Business.updateMany({},{$inc:{FromDateCount:1}});
+//     },2000);
+// }
+// autoincrement();
 
 
-const getcount = async (req, res) => {
-    try {
-        const { id } = req.body;
 
-        const business = await Business.findById(id);
-        if (!business) {
-            return res.status(404).json({ message: "Business not found" });
+// const getcount = async (req, res) => {
+//     try {
+//         const { id } = req.body;
+
+//         const business = await Business.findById(id);
+//         if (!business) {
+//             return res.status(404).json({ message: "Business not found" });
+//         }
+
+//         res.status(200).json({ message: "counting Days", FromDateCount:`${business.FromDateCount} Days`});
+//     } catch (error) {
+//         res.status(400).json({ message: error.message });
+//     }
+// };
+
+async function getServiceDateCount(req, res){
+    try{
+        if(!req.body || Object.keys(req.body).length === 0){
+            return res.status(400).json({ message: 'Request body is empty' });
         }
 
-        res.status(200).json({ message: "counting Days", FromDateCount:`${business.FromDateCount} Days`});
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+        const {id} = req.body;
+        // console.log("serviceId:", id);
+
+        if (!id){
+            return res.status(400).json({ message: 'Service ID is required' });
+        }
+        const business = await Business.findOne({ 'services._id': id });
+        if(!business){
+            return res.status(404).json({ message: 'Service not found' });
+        }
+        const service = business.services.find(s => s._id.toString() === id);
+        if(!service){
+            return res.status(404).json({ message: 'Service not found' });
+        }
+        const diffDays = Math.floor((new Date() - new Date(service.placedDate)) / (1000 * 60 * 60 * 24));
+        res.json({ serviceName: service.serviceName,todayDate:new Date().toISOString().split('T')[0], Datecount: diffDays });
+    }catch(error){
+        res.status(500).json({ message: 'Error fetching service data', error });
     }
-};
+}
+
 
 
 const deleteBusiness = async (req, res) => {
@@ -263,4 +292,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getcount, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount, deleteBusiness };

@@ -8,9 +8,9 @@ const {
   getclientServiceAndDate,
   getclientById,
   updateBusiness,
-  getcount,
   deleteBusiness,
   getdate,
+  getServiceDateCount,
 } = require('../controllers/businesscontroller');
 
 const router = express.Router();
@@ -23,6 +23,6 @@ router.get('/getthree/:id',getclientById);
 router.post('/filter-date',getdate);
 router.put('/update/:id', protect, updateBusiness);
 router.delete('/delete/:id', protect, deleteBusiness);
-router.post('/getcount',getcount);
+router.post('/service/datecount',getServiceDateCount);
 
 module.exports = router;

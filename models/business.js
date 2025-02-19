@@ -10,13 +10,37 @@ const serviceSchema = new mongoose.Schema({
     totalAmount:{type:Number},
     productDetails:{type:String},
     availability:{type:Boolean,default:true},
+    placedDate:{
+         type:Date,
+         default:Date.now
+        },
+    todayDate:{
+        type:Date,
+        default:Date.now
+    },
 });
+
+
 
 serviceSchema.pre('save',function(next){
     this.gstAmount = (this.price*this.gstRate)/100;
     this.totalAmount = (this.price+this.gstAmount);
+    this.todaydate = new Date();
     next();
 });
+serviceSchema.virtual('todaydate').get(function(){
+    return new Date().toISOString().split('T')[0];
+});
+
+serviceSchema.virtual('daysdifference').get(function () {
+    const todayDate = new Date();
+    const placedDate = new Date(this.placedDate);
+    const timeDifference = todayDate - placedDate;
+    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+});
+
+serviceSchema.set('toJSON', { virtuals: true });
+serviceSchema.set('toObject', { virtuals: true });
 
 const businessSchema = new mongoose.Schema({
     CompanyName:{type:String,
@@ -36,10 +60,10 @@ const businessSchema = new mongoose.Schema({
         required:true,
     },
     services:[serviceSchema],
-    FromDateCount:{
-        type:Number,
-        default:0,
-    },
+    // FromDateCount:{
+    //     type:Number,
+    //     default:0,
+    // },
     profilePicture:{
         type:String,
         required:false,
@@ -64,7 +88,7 @@ const businessSchema = new mongoose.Schema({
     }],
 },
 {timestamps:true},
-{versionkey:false}
+{versionKey:false}
 );
 
 const Business = mongoose.model('Business',businessSchema)
