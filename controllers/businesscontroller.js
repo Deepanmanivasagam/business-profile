@@ -270,6 +270,9 @@ async function getServiceDateCount(req, res){
         if(!service){
             return res.status(404).json({ message: 'Service not found' });
         }
+        // log for virtual and serviceSchema
+        console.log(service.todaydate);
+        console.log(service.todayDate)
         const diffDays = Math.floor((new Date() - new Date(service.placedDate)) / (1000 * 60 * 60 * 24));
         res.json({ serviceName: service.serviceName,todayDate:new Date().toISOString().split('T')[0], Datecount: diffDays });
     }catch(error){
