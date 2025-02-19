@@ -25,7 +25,7 @@ const serviceSchema = new mongoose.Schema({
 serviceSchema.pre('save',function(next){
     this.gstAmount = (this.price*this.gstRate)/100;
     this.totalAmount = (this.price+this.gstAmount);
-    this.todaydate = new Date();
+    this.todayDate = new Date();
     next();
 });
 serviceSchema.virtual('todaydate').get(function(){
