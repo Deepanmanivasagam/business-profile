@@ -294,28 +294,28 @@ const highpaid = async (req, res) => {
         const aggregated = await Business.aggregate([
             {
                 $match:{
-                    createdAt:{$gte:startingdate,$lte: endingdate }
+                createdAt:{$gte:startingdate,$lte: endingdate }
                 }
             },
             {$unwind:"$services"},
             {
                 $match:{
-                    "services.serviceName":serviceName
+                "services.serviceName":serviceName
                 }
             },
             {
                 $group:{
-                    _id:"$services.serviceName",
-                    totalAmount:{$sum:"$services.totalAmount"},
-                    count:{$sum: 1}
+                _id:"$services.serviceName",
+                totalAmount:{$sum:"$services.totalAmount"},
+                count:{$sum: 1}
                 }
             },
             {
                 $project:{
-                    _id:0,
-                    serviceName:"$_id",
-                    totalAmount:1,
-                    count:1
+                _id:0,
+                serviceName:"$_id",
+                totalAmount:1,
+                count:1
                 }
             }
         ]);
