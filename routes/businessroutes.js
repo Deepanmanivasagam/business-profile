@@ -11,6 +11,7 @@ const {
   deleteBusiness,
   getdate,
   getServiceDateCount,
+  getFilteredBusinessDate,
 } = require('../controllers/businesscontroller');
 
 const router = express.Router();
@@ -24,5 +25,6 @@ router.post('/filter-date',getdate);
 router.put('/update/:id', protect, updateBusiness);
 router.delete('/delete/:id', protect, deleteBusiness);
 router.post('/service/datecount',getServiceDateCount);
+router.post('/filterdetails',getFilteredBusinessDate);
 
 module.exports = router;

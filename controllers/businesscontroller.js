@@ -1,4 +1,5 @@
 const Business = require('../models/business');
+const User = require('../models/user');
 const { Country, State, City } = require('../models/location');
 const Employee = require('../models/employee');
 const mongoose = require('mongoose');
@@ -280,6 +281,36 @@ const getServiceDateCount = async (req, res)=>{
     }
 }
 
+const getFilteredBusinessDate = async (req, res)=>{
+    try{
+        const {createdAtFrom,createdAtTo} = req.body;
+
+        const startDate = new Date(createdAtFrom);
+        const endDate = new Date(createdAtTo);
+        endDate.setHours(23, 59, 59, 999); 
+
+        const businesses = await Business.find({
+            createdAt:{$gte:startDate, $lte:endDate}
+        }).populate("ClientId", "username").populate({path:"StateName", select:"StateName -_id"})
+
+        if(!businesses){
+            return res.status(404).json({message:"in the given date range no business found"});
+        }
+
+        const finaldata = businesses.flatMap(business => business.services.map(service => ({
+                userName:business.ClientId?.username,
+                companyName: business.CompanyName,
+                serviceName: service.serviceName,
+                totalAmount: service.totalAmount,
+                stateName:business.StateName?.StateName,
+    }))
+);
+        res.status(200).json({totaldata:finaldata.length, result:finaldata});
+    }catch(error){
+        res.status(500).json({ message: "Error fetching filtered business data", error });
+    }
+}
+
 
 
 const deleteBusiness = async (req, res) => {
@@ -295,4 +326,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount,getFilteredBusinessDate, deleteBusiness };
