@@ -10,6 +10,7 @@ const {
   updateBusiness,
   deleteBusiness,
   getdate,
+  highpaid,
   getServiceDateCount,
   getFilteredBusinessDate,
 } = require('../controllers/businesscontroller');
@@ -26,5 +27,6 @@ router.put('/update/:id', protect, updateBusiness);
 router.delete('/delete/:id', protect, deleteBusiness);
 router.post('/service/datecount',getServiceDateCount);
 router.post('/filterdetails',getFilteredBusinessDate);
+router.post('/highpaid',highpaid);
 
 module.exports = router;

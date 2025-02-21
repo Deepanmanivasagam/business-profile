@@ -281,6 +281,53 @@ const getServiceDateCount = async (req, res)=>{
     }
 }
 
+
+
+const highpaid = async (req, res) => {
+    try {
+        const {placedfrom,placedto,serviceName} = req.body;
+
+        const startingdate = new Date(placedfrom);
+        const endingdate = new Date(placedto);
+        endingdate.setHours(23, 59, 59, 999); 
+
+        const aggregated = await Business.aggregate([
+            {
+                $match:{
+                    createdAt:{$gte:startingdate,$lte: endingdate }
+                }
+            },
+            {$unwind:"$services"},
+            {
+                $match:{
+                    "services.serviceName":serviceName
+                }
+            },
+            {
+                $group:{
+                    _id:"$services.serviceName",
+                    totalAmount:{$sum:"$services.totalAmount"},
+                    count:{$sum: 1}
+                }
+            },
+            {
+                $project:{
+                    _id:0,
+                    serviceName:"$_id",
+                    totalAmount:1,
+                    count:1
+                }
+            }
+        ]);
+
+        res.status(200).json({result:aggregated});
+    }catch(error){
+        res.status(400).json({message:error.message});
+    }
+};
+
+
+
 const getFilteredBusinessDate = async (req, res)=>{
     try{
         const {createdAtFrom,createdAtTo} = req.body;
@@ -299,6 +346,7 @@ const getFilteredBusinessDate = async (req, res)=>{
 
         const finaldata = businesses.flatMap(business => business.services.map(service => ({
                 userName:business.ClientId?.username,
+                contactInfo:business.contactInfo,
                 companyName: business.CompanyName,
                 serviceName: service.serviceName,
                 totalAmount: service.totalAmount,
@@ -326,4 +374,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount,getFilteredBusinessDate, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount,highpaid,getFilteredBusinessDate, deleteBusiness };
