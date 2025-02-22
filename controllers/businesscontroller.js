@@ -281,7 +281,22 @@ const getServiceDateCount = async (req, res)=>{
     }
 }
 
+const filteruser = async (req,res)=>{
+    try{
+        const {placedDate} = req.body;
+        // .toISOString().split('T')[0]
+        const existingdate = new Date(placedDate).setHours(0, 0, 0, 0);
+        const endoftheday = new Date(placedDate).setHours(23, 59, 59, 999);
 
+        const filter={
+                createdAt: {$gte:existingdate, $lte:endoftheday}
+            }
+        const newdate = await User.find(filter);
+        res.status(200).json({result:newdate})
+    }catch(error){
+          res.status(400).json({message:error.message})
+    }
+}
 
 const highpaid = async (req, res) => {
     try {
@@ -307,7 +322,7 @@ const highpaid = async (req, res) => {
                 $group:{
                 _id:"$services.serviceName",
                 totalAmount:{$sum:"$services.totalAmount"},
-                count:{$sum: 1}
+                Placed:{$sum: 1}
                 }
             },
             {
@@ -315,7 +330,7 @@ const highpaid = async (req, res) => {
                 _id:0,
                 serviceName:"$_id",
                 totalAmount:1,
-                count:1
+                Placed:1
                 }
             }
         ]);
@@ -324,9 +339,7 @@ const highpaid = async (req, res) => {
     }catch(error){
         res.status(400).json({message:error.message});
     }
-};
-
-
+}
 
 const getFilteredBusinessDate = async (req, res)=>{
     try{
@@ -359,8 +372,6 @@ const getFilteredBusinessDate = async (req, res)=>{
     }
 }
 
-
-
 const deleteBusiness = async (req, res) => {
     const { id } = req.params;
     try {
@@ -374,4 +385,4 @@ const deleteBusiness = async (req, res) => {
     }
 };
 
-module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness, getServiceDateCount,highpaid,getFilteredBusinessDate, deleteBusiness };
+module.exports = { createBusiness, getAllBusinesses, getBusinessById, getclientServiceAndDate,getclientById,getdate, updateBusiness,filteruser, getServiceDateCount,highpaid,getFilteredBusinessDate, deleteBusiness };

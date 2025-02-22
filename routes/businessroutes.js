@@ -8,6 +8,7 @@ const {
   getclientServiceAndDate,
   getclientById,
   updateBusiness,
+  filteruser,
   deleteBusiness,
   getdate,
   highpaid,
@@ -28,5 +29,6 @@ router.delete('/delete/:id', protect, deleteBusiness);
 router.post('/service/datecount',getServiceDateCount);
 router.post('/filterdetails',getFilteredBusinessDate);
 router.post('/highpaid',highpaid);
+router.post('/user',filteruser);
 
 module.exports = router;
