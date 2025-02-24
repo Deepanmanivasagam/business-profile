@@ -19,6 +19,7 @@ const app = express();
 connectDB();
 app.use(bodyparser.json());
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 app.use("/api/auth", authRoutes);
 app.use("/api/business",businessroutes);
 app.use("/api/location",locationroutes);
