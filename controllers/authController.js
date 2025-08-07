@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
 
     await user.save();
 
-    const token = jwtUtils.generateToken(user._id);
+    const token = jwtUtils.generateToken(user._id)
 
     res.status(201).json({
       message: "User created successfully",
